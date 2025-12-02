@@ -23,7 +23,9 @@ services:
     volumes:
       - ./server/temp:/app/temp
     networks:
-      - internal
+      internal:
+        aliases:
+          - ytsubs-backend
 
 networks:
   caddy_network:
