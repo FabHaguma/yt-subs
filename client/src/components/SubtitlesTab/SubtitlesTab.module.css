@@ -1,0 +1,56 @@
+.subtitleContainer {
+  height: 500px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+}
+
+.subtitleLine {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.subtitleLine:hover {
+  background-color: #e5e7eb;
+}
+
+.timestamp {
+  font-family: monospace;
+  color: #9ca3af;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.text {
+  color: #374151;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.secondaryButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.secondaryButton:hover {
+  background-color: #e5e7eb;
+}

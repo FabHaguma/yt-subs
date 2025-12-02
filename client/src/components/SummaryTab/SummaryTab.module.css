@@ -1,0 +1,26 @@
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.summaryBox {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.summaryTitle {
+  font-weight: 600;
+  color: #166534;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.summaryText {
+  line-height: 1.6;
+}

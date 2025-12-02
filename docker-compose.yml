@@ -1,0 +1,32 @@
+services:
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: ytsubs-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - caddy_network
+      - internal
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: ytsubs-backend
+    restart: unless-stopped
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - PORT=3000
+    volumes:
+      - ./server/temp:/app/temp
+    networks:
+      - internal
+
+networks:
+  caddy_network:
+    external: true
+  internal:
+    driver: bridge
