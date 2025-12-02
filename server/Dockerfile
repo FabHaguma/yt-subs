@@ -28,4 +28,4 @@ RUN mkdir -p temp
 EXPOSE 3000
 
 # Start server
-CMD ["node", "index.js"]
+CMD ["node", "src/app.js"]
