@@ -1,22 +1,18 @@
-FROM node:20-bullseye-slim
+FROM python:3.12-slim-bookworm
 
-# Install Python and ffmpeg (dependencies for yt-dlp)
+# Install ffmpeg (dependency for yt-dlp)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3 ffmpeg curl ca-certificates && \
+    apt-get install -y --no-install-recommends ffmpeg && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install yt-dlp
-RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
-    chmod a+rx /usr/local/bin/yt-dlp
-
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy requirements file
+COPY requirements.txt ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy source code
 COPY . .
@@ -27,5 +23,5 @@ RUN mkdir -p temp
 # Expose port
 EXPOSE 3000
 
-# Start server
-CMD ["node", "src/app.js"]
+# Start server with gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:3000", "--workers", "2", "app:app"]
