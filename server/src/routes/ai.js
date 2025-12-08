@@ -19,7 +19,18 @@ router.post('/summarize', async (req, res) => {
     res.json({ summary });
   } catch (error) {
     console.error('Error summarizing:', error);
-    res.status(500).json({ error: 'Failed to generate summary' });
+    
+    if (error.status === 429) {
+      return res.status(429).json({ 
+        error: 'AI Service Quota Exceeded', 
+        message: 'The AI service is currently busy or you have exceeded your free quota. Please try again later.' 
+      });
+    }
+    
+    res.status(500).json({ 
+      error: 'Failed to generate summary',
+      message: error.message
+    });
   }
 });
 
@@ -39,7 +50,18 @@ router.post('/search', async (req, res) => {
     res.json({ answer });
   } catch (error) {
     console.error('Error searching:', error);
-    res.status(500).json({ error: 'Failed to search content' });
+    
+    if (error.status === 429) {
+      return res.status(429).json({ 
+        error: 'AI Service Quota Exceeded', 
+        message: 'The AI service is currently busy or you have exceeded your free quota. Please try again later.' 
+      });
+    }
+
+    res.status(500).json({ 
+      error: 'Failed to search content',
+      message: error.message
+    });
   }
 });
 

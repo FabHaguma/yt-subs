@@ -10,22 +10,24 @@
 .input {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border-color);
   border-radius: 0.5rem;
   font-size: 1rem;
   transition: border-color 0.2s;
+  background: var(--surface-color);
+  color: var(--text-color);
 }
 
 .input:focus {
   outline: none;
-  border-color: #ff0000;
+  border-color: var(--accent);
 }
 
 .button {
   padding: 0.75rem 1.5rem;
-  background-color: #ff0000;
-  color: white;
-  border: none;
+  background-color: var(--accent);
+  color: #ffffff;
+  border: 1px solid var(--accent);
   border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
@@ -40,18 +42,20 @@
 }
 
 .button:disabled {
-  background-color: #ffcccc;
+  background-color: var(--surface-subtle);
+  color: var(--muted-text);
   cursor: not-allowed;
 }
 
 .chatResponse {
   margin-top: 1rem;
   padding: 1rem;
-  background-color: #eff6ff;
+  background-color: var(--info-surface);
   border-radius: 0.5rem;
-  border: 1px solid #bfdbfe;
+  border: 1px solid var(--info-border);
 }
 
 .responseText {
   margin-top: 0.5rem;
+  color: var(--text-color);
 }

@@ -1,30 +1,53 @@
-import { Copy, Download } from 'lucide-react';
+import { useState } from 'react';
 import styles from './SubtitlesTab.module.css';
 
-function SubtitlesTab({ subtitles, onCopy, onDownload }) {
+function SubtitlesTab({ subtitles }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const formatSubtitlesText = (subs) => {
+    return subs
+      .map((sub) => `${sub.start} --> ${sub.end}\n${sub.text}`)
+      .join('\n\n');
+  };
+
+  const subtitlesText = formatSubtitlesText(subtitles);
+  const visibleSubtitles = subtitles.slice(0, 5);
+
+  if (isExpanded) {
+    return (
+      <>
+        <textarea
+          className={styles.expandedTextarea}
+          value={subtitlesText}
+          readOnly
+        />
+        <button
+          className={styles.collapseButton}
+          onClick={() => setIsExpanded(false)}
+        >
+          Collapse
+        </button>
+      </>
+    );
+  }
+
   return (
     <>
-      <div className={styles.actions}>
-        <button className={styles.secondaryButton} onClick={() => onCopy(true)}>
-          <Copy size={16} /> Copy w/ Time
-        </button>
-        <button className={styles.secondaryButton} onClick={() => onCopy(false)}>
-          <Copy size={16} /> Copy Text
-        </button>
-        <button className={styles.secondaryButton} onClick={() => onDownload('txt')}>
-          <Download size={16} /> TXT
-        </button>
-        <button className={styles.secondaryButton} onClick={() => onDownload('json')}>
-          <Download size={16} /> JSON
-        </button>
-      </div>
       <div className={styles.subtitleContainer}>
-        {subtitles.map((sub, index) => (
+        {visibleSubtitles.map((sub, index) => (
           <div key={index} className={styles.subtitleLine}>
             <span className={styles.timestamp}>{sub.start}</span>
             <span className={styles.text}>{sub.text}</span>
           </div>
         ))}
+        {subtitles.length > 5 && (
+          <button
+            className={styles.expandButton}
+            onClick={() => setIsExpanded(true)}
+          >
+            Expand ({subtitles.length - 5} more lines)
+          </button>
+        )}
       </div>
     </>
   );

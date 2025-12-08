@@ -6,3 +6,4 @@ export { default as ContentPanel } from './ContentPanel';
 export { default as SubtitlesTab } from './SubtitlesTab';
 export { default as SummaryTab } from './SummaryTab';
 export { default as ChatTab } from './ChatTab';
+export { default as ErrorModal } from './ErrorModal';

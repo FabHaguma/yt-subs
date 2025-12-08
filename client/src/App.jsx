@@ -1,10 +1,17 @@
-import { useState } from 'react';
-import { Header, Footer, SearchBar, VideoCard, ContentPanel } from './components';
+import { useEffect, useState } from 'react';
+import { Header, Footer, SearchBar, VideoCard, ContentPanel, ErrorModal } from './components';
 import { fetchMetadata, fetchSubtitles, summarizeText, searchContent } from './services/api';
 import { formatSubtitlesForCopy, downloadSubtitles, copyToClipboard, getFullText } from './utils/subtitles';
 import styles from './App.module.css';
 
 function App() {
+  const getInitialTheme = () => {
+    if (typeof window === 'undefined') return 'light';
+    const stored = localStorage.getItem('theme');
+    if (stored === 'light' || stored === 'dark') return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  };
+
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [metadata, setMetadata] = useState(null);
@@ -16,6 +23,13 @@ function App() {
   const [chatQuery, setChatQuery] = useState('');
   const [chatResponse, setChatResponse] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+  const [dialog, setDialog] = useState({ message: '', tone: 'error' });
+  const [theme, setTheme] = useState(() => getInitialTheme());
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   const handleFetchVideo = async (e) => {
     e.preventDefault();
@@ -28,24 +42,60 @@ function App() {
     setChatResponse('');
 
     try {
+      // Fetch metadata
       const metaData = await fetchMetadata(url);
       setMetadata(metaData);
 
-      const subData = await fetchSubtitles(url);
-      setSubtitles(subData.parsed);
-      setRawSubtitles(subData.raw);
+      // Fetch subtitles in JSON format
+      const subData = await fetchSubtitles(url, 'json');
+      
+      // console.log('Subtitle data received:', subData); // Debug log
+      
+      // The backend returns the whole result object when format is 'json'
+      let transcriptData = subData;
+      
+      // If it has a content property, parse it
+      if (subData.content) {
+        transcriptData = typeof subData.content === 'string' 
+          ? JSON.parse(subData.content) 
+          : subData.content;
+      }
+      
+      // Convert to the format expected by the UI
+      // youtube-transcript returns: [{ text, duration, offset }, ...]
+      const formattedSubs = Array.isArray(transcriptData) 
+        ? transcriptData.map(item => ({
+            start: formatTime((item.offset || 0) / 1000),
+            end: formatTime(((item.offset || 0) + (item.duration || 0)) / 1000),
+            text: item.text || ''
+          }))
+        : [];
+      
+      // console.log('Formatted subtitles:', formattedSubs); // Debug log
+      
+      setSubtitles(formattedSubs);
+      setRawSubtitles(JSON.stringify(transcriptData, null, 2));
     } catch (error) {
-      console.error(error);
-      alert('Failed to fetch video data. Make sure the video has English subtitles.');
+      console.error('Error details:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Unknown error';
+      setDialog({ message: `Failed to fetch video data: ${errorMessage}\n\nMake sure the video has subtitles available.`, tone: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
+  // Helper function to format time
+  const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
   const handleCopy = async (withTimestamps) => {
     const text = formatSubtitlesForCopy(subtitles, withTimestamps);
     await copyToClipboard(text);
-    alert('Copied to clipboard!');
+    setDialog({ message: 'Copied to clipboard!', tone: 'info' });
   };
 
   const handleDownload = (format) => {
@@ -58,6 +108,8 @@ function App() {
     });
   };
 
+
+
   const handleSummarize = async () => {
     if (summary) return;
     setSummaryLoading(true);
@@ -67,7 +119,7 @@ function App() {
       setSummary(result.summary);
     } catch (error) {
       console.error(error);
-      alert('Failed to generate summary');
+      setDialog({ message: 'Failed to generate summary', tone: 'error' });
     } finally {
       setSummaryLoading(false);
     }
@@ -83,15 +135,19 @@ function App() {
       setChatResponse(result.answer);
     } catch (error) {
       console.error(error);
-      alert('Failed to get answer');
+      setDialog({ message: 'Failed to get answer', tone: 'error' });
     } finally {
       setChatLoading(false);
     }
   };
 
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   return (
     <div className={styles.container}>
-      <Header />
+      <Header theme={theme} onToggleTheme={toggleTheme} />
 
       <SearchBar
         url={url}
@@ -125,6 +181,14 @@ function App() {
       )}
 
       <Footer />
+
+      <ErrorModal
+        isOpen={!!dialog.message}
+        title={dialog.tone === 'info' ? 'Notice' : 'Error'}
+        tone={dialog.tone}
+        message={dialog.message}
+        onClose={() => setDialog({ message: '', tone: 'error' })}
+      />
     </div>
   );
 }

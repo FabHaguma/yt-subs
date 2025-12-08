@@ -1,0 +1,131 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  backdrop-filter: blur(2px);
+}
+
+.modal {
+  background: var(--surface-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  width: min(520px, 92vw);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  animation: popIn 220ms ease-out;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: var(--surface-subtle);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.pill {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.error {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.info {
+  background: var(--info-surface);
+  color: var(--info-text);
+  border: 1px solid var(--info-border);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--muted-text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.1rem 0.35rem;
+  border-radius: 8px;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.closeButton:hover {
+  background: var(--surface-hover);
+  color: var(--text-color);
+}
+
+.closeButton:active {
+  transform: scale(0.96);
+}
+
+.content {
+  padding: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.message {
+  margin: 0;
+  color: var(--text-color);
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 1.25rem 1.25rem;
+}
+
+.button {
+  padding: 0.55rem 1.2rem;
+  background: linear-gradient(135deg, var(--accent), #b91c1c);
+  color: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(220, 38, 38, 0.25);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.button:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 12px 24px rgba(220, 38, 38, 0.3);
+}
+
+.button:active {
+  transform: translateY(1px);
+  box-shadow: 0 8px 16px rgba(220, 38, 38, 0.22);
+}

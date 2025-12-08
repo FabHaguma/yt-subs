@@ -21,13 +21,13 @@ export const getFullText = (subtitles) => {
 };
 
 /**
- * Download subtitles in various formats
+ * Download subtitles in various formats (client-side generation)
  * @param {Object} options - Download options
  * @param {Array} options.subtitles - Parsed subtitles
  * @param {string} options.rawSubtitles - Raw VTT content
  * @param {string} options.title - Video title
  * @param {string} options.channel - Channel name
- * @param {string} options.format - Format: 'txt', 'json', or 'vtt'
+ * @param {string} options.format - Format: 'txt', 'json', 'srt', or 'vtt'
  */
 export const downloadSubtitles = ({ subtitles, rawSubtitles, title, channel, format }) => {
   let content = '';
@@ -46,10 +46,23 @@ export const downloadSubtitles = ({ subtitles, rawSubtitles, title, channel, for
     case 'txt':
       content = subtitles.map(s => s.text).join(' ');
       break;
-    case 'vtt':
     case 'srt':
-      content = rawSubtitles;
-      filename = `${baseFilename}.vtt`;
+      // Generate SRT format
+      content = subtitles.map((s, i) => {
+        return `${i + 1}\n${s.start} --> ${s.end}\n${s.text}\n`;
+      }).join('\n');
+      type = 'application/x-subrip';
+      break;
+    case 'vtt':
+      // Use raw subtitles if available, otherwise generate VTT
+      if (rawSubtitles && rawSubtitles.startsWith('WEBVTT')) {
+        content = rawSubtitles;
+      } else {
+        content = 'WEBVTT\n\n' + subtitles.map(s => {
+          return `${s.start} --> ${s.end}\n${s.text}\n`;
+        }).join('\n');
+      }
+      type = 'text/vtt';
       break;
     default:
       content = subtitles.map(s => s.text).join(' ');

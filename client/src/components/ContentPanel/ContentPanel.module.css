@@ -1,17 +1,23 @@
 .card {
-  background: white;
+  background: var(--surface-color);
   border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
   padding: 1.5rem;
   height: fit-content;
+}
+
+.tabsContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
 }
 
 .tabs {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 0.5rem;
 }
 
 .tab {
@@ -20,7 +26,7 @@
   padding: 0.5rem 1rem;
   cursor: pointer;
   font-weight: 600;
-  color: #666;
+  color: var(--muted-text);
   border-radius: 0.25rem;
   display: flex;
   align-items: center;
@@ -33,6 +39,71 @@
 }
 
 .activeTab {
-  background-color: #fee2e2;
-  color: #ff0000;
+  background-color: var(--accent-soft);
+  color: var(--accent);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.dropdownContainer {
+  position: relative;
+}
+
+.actionButton {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--surface-subtle);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.actionButton:hover {
+  background-color: var(--surface-hover);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-soft);
+  z-index: 10;
+  min-width: 150px;
+  margin-top: 0.25rem;
+}
+
+.menuItem {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-color);
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.menuItem:first-child {
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.menuItem:last-child {
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.menuItem:hover {
+  background-color: var(--surface-subtle);
 }

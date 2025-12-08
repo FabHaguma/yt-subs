@@ -111,6 +111,28 @@ const getYouTubeUrl = (videoId) => {
 };
 
 /**
+ * Sanitize filename by removing invalid characters (matching Python app)
+ * @param {string} name - Original filename
+ * @returns {string} Sanitized filename
+ */
+const sanitizeFilename = (name) => {
+  if (!name) return 'untitled';
+  
+  // Remove or replace invalid filename characters
+  let sanitized = name
+    .replace(/[<>:"/\\|?*\x00-\x1f]/g, '') // Remove invalid chars
+    .replace(/\s+/g, ' ') // Collapse multiple spaces
+    .trim();
+  
+  // Limit length to 100 characters
+  if (sanitized.length > 100) {
+    sanitized = sanitized.substring(0, 100);
+  }
+  
+  return sanitized || 'untitled';
+};
+
+/**
  * Parse VTT content to extract subtitles
  * @param {string} content - VTT file content
  * @returns {Array} Parsed subtitles with start, end, and text
@@ -156,4 +178,5 @@ module.exports = {
   parseVTT,
   extractVideoId,
   getYouTubeUrl,
+  sanitizeFilename,
 };
