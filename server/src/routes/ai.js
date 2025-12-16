@@ -2,6 +2,7 @@ const express = require('express');
 const { gemini } = require('../services');
 
 const router = express.Router();
+const tempQuotaExceededMessage = 'The AI service is currently busy or you have exceeded your free quota. Please try again later.';
 
 /**
  * POST /api/summarize
@@ -28,8 +29,10 @@ router.post('/summarize', async (req, res) => {
     }
     
     res.status(500).json({ 
-      error: 'Failed to generate summary',
-      message: error.message
+      // error: 'Failed to generate summary',
+      // message: error.message
+      error: 'AI Service Quota Exceeded', 
+      message: tempQuotaExceededMessage
     });
   }
 });
@@ -59,8 +62,10 @@ router.post('/search', async (req, res) => {
     }
 
     res.status(500).json({ 
-      error: 'Failed to search content',
-      message: error.message
+      // error: 'Failed to generate summary',
+      // message: error.message
+      error: 'AI Service Quota Exceeded', 
+      message: tempQuotaExceededMessage
     });
   }
 });
