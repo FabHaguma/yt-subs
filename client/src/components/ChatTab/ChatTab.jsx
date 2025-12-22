@@ -1,9 +1,27 @@
 import { MessageSquare } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import styles from './ChatTab.module.css';
 
-function ChatTab({ query, setQuery, response, loading, onSubmit }) {
+function ChatTab({ query, setQuery, response, loading, onSubmit, mode, onModeChange, availableModes = [] }) {
   return (
     <div className={styles.chatBox}>
+      {availableModes.length > 0 && (
+        <div className={styles.modeSelector}>
+          <label htmlFor="chat-mode">Mode:</label>
+          <select 
+            id="chat-mode"
+            value={mode || 'direct'} 
+            onChange={(e) => onModeChange && onModeChange(e.target.value)}
+            className={styles.modeSelect}
+          >
+            {availableModes.map(m => (
+              <option key={m.id} value={m.id} title={m.description}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <form onSubmit={onSubmit} className={styles.chatInput}>
         <input
           type="text"
@@ -19,7 +37,9 @@ function ChatTab({ query, setQuery, response, loading, onSubmit }) {
       {response && (
         <div className={styles.chatResponse}>
           <strong>Answer:</strong>
-          <p className={styles.responseText}>{response}</p>
+          <div className={styles.responseText}>
+            <ReactMarkdown>{response}</ReactMarkdown>
+          </div>
         </div>
       )}
     </div>

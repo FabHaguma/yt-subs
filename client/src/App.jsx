@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Header, Footer, SearchBar, VideoCard, ContentPanel, ErrorModal } from './components';
-import { fetchMetadata, fetchSubtitles, summarizeText, searchContent } from './services/api';
+import { fetchMetadata, fetchSubtitles, summarizeText, searchContent, getPresets } from './services/api';
 import { formatSubtitlesForCopy, downloadSubtitles, copyToClipboard, getFullText } from './utils/subtitles';
 import styles from './App.module.css';
 
@@ -20,9 +20,12 @@ function App() {
   const [activeTab, setActiveTab] = useState('subtitles');
   const [summary, setSummary] = useState('');
   const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryMode, setSummaryMode] = useState('standard');
   const [chatQuery, setChatQuery] = useState('');
   const [chatResponse, setChatResponse] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+  const [chatMode, setChatMode] = useState('direct');
+  const [presets, setPresets] = useState({ summary: [], search: [], extract: [], chat: [] });
   const [dialog, setDialog] = useState({ message: '', tone: 'error' });
   const [theme, setTheme] = useState(() => getInitialTheme());
 
@@ -30,6 +33,19 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    // Fetch available AI presets
+    const loadPresets = async () => {
+      try {
+        const data = await getPresets();
+        setPresets(data);
+      } catch (error) {
+        console.error('Failed to load AI presets:', error);
+      }
+    };
+    loadPresets();
+  }, []);
 
   const handleFetchVideo = async (e) => {
     e.preventDefault();
@@ -110,12 +126,12 @@ function App() {
 
 
 
-  const handleSummarize = async () => {
-    if (summary) return;
+  const handleSummarize = async (forceRegenerate = false) => {
+    if (summary && !forceRegenerate) return;
     setSummaryLoading(true);
     try {
       const text = getFullText(subtitles);
-      const result = await summarizeText(text);
+      const result = await summarizeText(text, summaryMode);
       setSummary(result.summary);
     } catch (error) {
       console.error(error);
@@ -125,13 +141,18 @@ function App() {
     }
   };
 
+  const handleSummaryModeChange = (newMode) => {
+    setSummaryMode(newMode);
+    // Keep the existing summary visible so the regenerate button stays visible
+  };
+
   const handleChat = async (e) => {
     e.preventDefault();
     if (!chatQuery) return;
     setChatLoading(true);
     try {
       const text = getFullText(subtitles);
-      const result = await searchContent(text, chatQuery);
+      const result = await searchContent(text, chatQuery, chatMode);
       setChatResponse(result.answer);
     } catch (error) {
       console.error(error);
@@ -168,10 +189,15 @@ function App() {
             subtitles={subtitles}
             summary={summary}
             summaryLoading={summaryLoading}
+            summaryMode={summaryMode}
+            onSummaryModeChange={handleSummaryModeChange}
             chatQuery={chatQuery}
             setChatQuery={setChatQuery}
             chatResponse={chatResponse}
             chatLoading={chatLoading}
+            chatMode={chatMode}
+            onChatModeChange={setChatMode}
+            presets={presets}
             onSummarize={handleSummarize}
             onChat={handleChat}
             onCopy={handleCopy}

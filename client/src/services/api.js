@@ -64,17 +64,41 @@ export const downloadSubtitles = async (url, format = 'srt') => {
 };
 
 /**
+ * Get available AI presets
+ */
+export const getPresets = async () => {
+  const response = await axios.get(`${API_BASE}/presets`);
+  return response.data;
+};
+
+/**
  * Summarize text using AI
  */
-export const summarizeText = async (text) => {
-  const response = await axios.post(`${API_BASE}/summarize`, { text });
+export const summarizeText = async (text, mode = 'standard', options = {}) => {
+  const response = await axios.post(`${API_BASE}/summarize`, { text, mode, options });
   return response.data;
 };
 
 /**
  * Search content using AI
  */
-export const searchContent = async (text, query) => {
-  const response = await axios.post(`${API_BASE}/search`, { text, query });
+export const searchContent = async (text, query, mode = 'direct', options = {}) => {
+  const response = await axios.post(`${API_BASE}/search`, { text, query, mode, options });
+  return response.data;
+};
+
+/**
+ * Extract information from content
+ */
+export const extractContent = async (text, extractType, options = {}) => {
+  const response = await axios.post(`${API_BASE}/extract`, { text, extractType, options });
+  return response.data;
+};
+
+/**
+ * Chat about video content
+ */
+export const chatWithVideo = async (text, message, mode = 'default', options = {}) => {
+  const response = await axios.post(`${API_BASE}/chat`, { text, message, mode, options });
   return response.data;
 };

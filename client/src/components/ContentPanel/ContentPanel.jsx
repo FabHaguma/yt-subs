@@ -11,10 +11,15 @@ function ContentPanel({
   subtitles,
   summary,
   summaryLoading,
+  summaryMode,
+  onSummaryModeChange,
   chatQuery,
   setChatQuery,
   chatResponse,
   chatLoading,
+  chatMode,
+  onChatModeChange,
+  presets,
   onSummarize,
   onChat,
   onCopy,
@@ -119,7 +124,14 @@ function ContentPanel({
       )}
 
       {activeTab === 'summary' && (
-        <SummaryTab summary={summary} loading={summaryLoading} />
+        <SummaryTab 
+          summary={summary} 
+          loading={summaryLoading}
+          mode={summaryMode}
+          onModeChange={onSummaryModeChange}
+          availableModes={presets.summary}
+          onGenerate={() => onSummarize(true)}
+        />
       )}
 
       {activeTab === 'chat' && (
@@ -129,6 +141,9 @@ function ContentPanel({
           response={chatResponse}
           loading={chatLoading}
           onSubmit={onChat}
+          mode={chatMode}
+          onModeChange={onChatModeChange}
+          availableModes={presets.search}
         />
       )}
     </div>
