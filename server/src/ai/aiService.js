@@ -10,8 +10,8 @@ const promptBuilder = require('./promptBuilder');
 const genAI = new GoogleGenerativeAI(config.geminiApiKey);
 
 // Model configuration
-const MODEL_NAME = 'gemini-2.0-flash-exp';
-const FALLBACK_MODEL = 'gemini-2.0-flash';
+const MODEL_NAME = 'gemini-3-flash-preview';
+const FALLBACK_MODEL = 'gemini-2.5-flash';
 
 /**
  * Generate content with the AI model
