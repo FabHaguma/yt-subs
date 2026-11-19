@@ -1,14 +1,4 @@
-FROM node:20-bullseye-slim
-
-# Install Python and ffmpeg (dependencies for yt-dlp)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3 ffmpeg curl ca-certificates && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install yt-dlp
-RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
-    chmod a+rx /usr/local/bin/yt-dlp
+FROM node:22-bookworm-slim
 
 WORKDIR /app
 
@@ -16,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Copy source code
 COPY . .
